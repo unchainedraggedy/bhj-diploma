@@ -14,7 +14,12 @@ class AccountsWidget {
    * необходимо выкинуть ошибку.
    * */
   constructor( element ) {
-
+    if(!element){
+      throw new Error('Пустой элемент')
+    }
+    this.element = element;
+    this.registerEvents();
+    this.update();
   }
 
   /**
@@ -25,7 +30,16 @@ class AccountsWidget {
    * вызывает AccountsWidget.onSelectAccount()
    * */
   registerEvents() {
-
+    this.element.addEventListener('click', (event) => {
+      if(event.target.closest('.create-account')){
+       const modal = document.getElementById('modal-new-account');
+       if(modal){
+        App.getModal('createAccount').open();
+       }
+      } else if (event.target.closest('.account')){
+        this.onSelectAccount()
+      }
+    })
   }
 
   /**
@@ -39,7 +53,14 @@ class AccountsWidget {
    * метода renderItem()
    * */
   update() {
-
+    if(User.current()){
+      Account.list(User.current(), (err, response) => {
+        if(response && response.success){
+          this.clean();
+          response.data.forEach(account => this.renderItem(account));
+        }
+      })
+    }
   }
 
   /**
@@ -48,7 +69,7 @@ class AccountsWidget {
    * в боковой колонке
    * */
   clear() {
-
+    this.element.querySelectorAll('.account').forEach(account => account.remove())
   }
 
   /**
@@ -59,7 +80,11 @@ class AccountsWidget {
    * Вызывает App.showPage( 'transactions', { account_id: id_счёта });
    * */
   onSelectAccount( element ) {
-
+    const activeAccount = this.element.querySelector('.account.active')
+    if(activeAccount){
+      activeAccount.classList.remove('active')
+    } element.classList.add('active');
+    App.showPage('transactions', {account_id: element.dataset.id})
   }
 
   /**

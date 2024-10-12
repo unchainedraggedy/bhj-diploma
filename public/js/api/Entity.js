@@ -9,7 +9,18 @@ class Entity {
    * (в зависимости от того, что наследуется от Entity)
    * */
   static list(data, callback){
-
+    createRequest({
+      url: this.URL, 
+      method: 'GET',
+      callback: (err, response) => {
+        if(err){
+          console.error('Ошибка');
+          callback(err, null);
+        } else {
+          callback(null, response);
+        }
+      }
+    })
   }
 
   /**
@@ -18,7 +29,19 @@ class Entity {
    * что наследуется от Entity)
    * */
   static create(data, callback) {
-
+    createRequest({
+      url: this.URL,
+      method: 'PUT',
+      data: data,
+      callback: (err, response) => {
+        if(err){
+          console.error('Ошибка при создании', err);
+          callback(err, null);
+        } else {
+          callback(null, response);
+        }
+      },
+    })
   }
 
   /**
@@ -26,6 +49,18 @@ class Entity {
    * (в зависимости от того, что наследуется от Entity)
    * */
   static remove(data, callback ) {
-
+    createRequest({
+      url: this.URL,
+      method: 'DELETE',
+      data: data,
+      callback: (err, response) => {
+        if(err){
+          console.error('Ошибка удаления');
+          callback(err, null);
+        } else {
+          callback(null, response);
+        }
+      }
+    })
   }
 }
